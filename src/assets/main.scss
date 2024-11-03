@@ -1,0 +1,13 @@
+@import './base.css';
+@import 'helper';
+@import 'breakpoints';
+@import 'primeicons/primeicons.css';
+@import './components/index';
+
+#app {
+  display: inline;
+  width: 100% !important;
+  height: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
