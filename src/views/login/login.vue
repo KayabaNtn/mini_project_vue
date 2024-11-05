@@ -67,6 +67,7 @@ export default {
         .then(res => {
           console.log('res: ', res)
         })
+        .catch(res => {})
     },
   },
   mounted() {
