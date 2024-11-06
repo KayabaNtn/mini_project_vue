@@ -1,9 +1,7 @@
 export default {
   namespaced: true,
   state: {
-    user: {
-      email: 'nhatnt@nal.com',
-    },
+    user: {},
   },
   mutations: {
     INIT_USER_INFO(state, userInfo) {

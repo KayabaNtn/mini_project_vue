@@ -44,20 +44,57 @@
         </a>
       </template>
       <template #end>
-        <div class="card flex justify-center">
-          <Button
-            type="button"
-            icon="pi pi-user"
-            @click="toggle"
-            aria-haspopup="true"
-            aria-controls="overlay_menu"
-          />
-          <Menu
-            ref="menu"
-            id="overlay_menu"
-            :model="itemsLogin"
-            :popup="true"
-          />
+        <div class="d-flex">
+          <Select
+            v-model="selectedCountry"
+            :options="countries"
+            optionLabel="name"
+            :placeholder="this.$t('nar_bar.language')"
+            class="w-full md:w-56 mr-10p w-158p"
+          >
+            <template #value="slotProps">
+              <div v-if="slotProps.value" class="d-flex items-center">
+                <img
+                  :alt="slotProps.value.label"
+                  :src="slotProps.value.image"
+                  :class="`mr-10p mr-2 flag flag-${slotProps.value.code.toLowerCase()}`"
+                  style="width: 25px"
+                />
+                <div>{{ slotProps.value.name }}</div>
+              </div>
+              <span v-else>
+                {{ slotProps.placeholder }}
+              </span>
+            </template>
+            <template #option="slotProps">
+              <div class="d-flex items-center">
+                <img
+                  :alt="slotProps.option.label"
+                  :src="slotProps.option.image"
+                  :class="`mr-10p mr-2 flag flag-${slotProps.option.code.toLowerCase()}`"
+                  style="width: 25px"
+                />
+                <div>
+                  {{ slotProps.option.name }}
+                </div>
+              </div>
+            </template>
+          </Select>
+          <div class="card d-flex justify-content-center">
+            <Button
+              type="button"
+              icon="pi pi-user"
+              @click="toggle"
+              aria-haspopup="true"
+              aria-controls="overlay_menu"
+            />
+            <Menu
+              ref="menu"
+              id="overlay_menu"
+              :model="itemsLogin"
+              :popup="true"
+            />
+          </div>
         </div>
       </template>
     </Menubar>
@@ -70,6 +107,9 @@ import Badge from 'primevue/badge'
 import Avatar from 'primevue/avatar'
 import Button from 'primevue/button'
 import Menu from 'primevue/menu'
+import Select from 'primevue/select'
+import VueCookies from 'vue-cookies'
+
 export default {
   components: {
     Menubar,
@@ -77,57 +117,67 @@ export default {
     Avatar,
     Button,
     Menu,
+    Select,
   },
   data() {
-    return {
-      items: [
+    return {}
+  },
+  computed: {
+    items() {
+      return [
         {
-          label: 'Home',
+          label: this.$t('nar_bar.home'),
           icon: 'pi pi-home',
+          command: () => {
+            this.$router.push('/')
+          },
         },
         {
-          label: 'About us',
+          label: this.$t('nar_bar.about_us'),
           icon: 'pi pi-info-circle',
         },
-        // {
-        //   label: 'Projects',
-        //   icon: 'pi pi-search',
-        //   badge: 3,
-        //   items: [
-        //     {
-        //       label: 'Core',
-        //       icon: 'pi pi-bolt',
-        //       shortcut: '⌘+S',
-        //     },
-        //     {
-        //       label: 'Blocks',
-        //       icon: 'pi pi-server',
-        //       shortcut: '⌘+B',
-        //     },
-        //     {
-        //       separator: true,
-        //     },
-        //     {
-        //       label: 'UI Kit',
-        //       icon: 'pi pi-pencil',
-        //       shortcut: '⌘+U',
-        //     },
-        //   ],
-        // },
-      ],
-      itemsLogin: [
+      ]
+    },
+    itemsLogin() {
+      return [
         {
-          label: 'Login',
+          label: this.$t('nar_bar.login'),
           icon: 'pi pi-sign-in',
           command: () => this.onMenuItemClick('login'),
         },
         {
-          label: 'Logout',
+          label: this.$t('nar_bar.logout'),
           icon: 'pi pi-sign-out',
           command: () => this.onMenuItemClick('logout'),
         },
-      ],
-    }
+      ]
+    },
+
+    selectedCountry: {
+      get() {
+        return this.countries.find(item => item.locale == this.$i18n.locale)
+      },
+      set(country) {
+        VueCookies.set('locale', country.locale)
+        this.$i18n.locale = country.locale
+      },
+    },
+    countries() {
+      return [
+        {
+          name: this.$t('nar_bar.english'),
+          code: 'UK',
+          image: '/src/assets/images/english_flag.png',
+          locale: 'en',
+        },
+        {
+          name: this.$t('nar_bar.vietnam'),
+          code: 'VN',
+          image: '/src/assets/images/vietnam_flag.png',
+          locale: 'vi',
+        },
+      ]
+    },
   },
   methods: {
     toggle(event) {

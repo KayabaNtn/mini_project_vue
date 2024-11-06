@@ -35,7 +35,7 @@ import Password from 'primevue/password'
 import FloatLabel from 'primevue/floatlabel'
 import Button from 'primevue/button'
 import axios from 'axios'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 
 export default {
   components: {
@@ -46,8 +46,8 @@ export default {
   },
   data() {
     return {
-      email: '',
-      password: '',
+      email: 'test@nal.com',
+      password: 'password123',
       API_URL: import.meta.env.VITE_APP_RAILS_API,
     }
   },
@@ -55,6 +55,7 @@ export default {
     ...mapGetters('CurrentUser', ['user']),
   },
   methods: {
+    ...mapMutations('CurrentUser', ['INIT_USER_INFO']),
     login() {
       const user = {
         email: 'test@nal.com',
@@ -65,13 +66,22 @@ export default {
           user: user,
         })
         .then(res => {
-          console.log('res: ', res)
+          this.INIT_USER_INFO(res.data.data.resource.data)
+          this.$router.push('/')
         })
-        .catch(res => {})
+        .catch(res => {
+          this.$toast.add({
+            severity: 'error',
+            summary: this.$t('login_page.error_messages.login_false'),
+            detail: this.$t('login_page.error_messages.login_false'),
+            life: 3000,
+          })
+        })
     },
   },
   mounted() {
     console.log('user: ', import.meta.env.VITE_APP_TEST)
+    console.log('$i18n.availableLocales: ', this.$i18n.availableLocales)
   },
 }
 </script>
